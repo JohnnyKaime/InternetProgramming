@@ -1,3 +1,6 @@
+use strict;
+use warnings;
+
 foreach my $forward (1..7){
 	print '* ' x $forward, "\n";
 }
