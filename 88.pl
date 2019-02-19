@@ -12,40 +12,28 @@ for(my $i = $base-1; $i>0; --$i){
 }
 print $sum, "\n";
 
-print "Using subroutines: Input power of e\n";
-
-chomp(my $n = <STDIN>);
-
-sub factorial{
-    my $n = shift;
-    my $s=1;
-    my $r=1;
-    while ($s <= $n){
-		$r *= $s;
-		$s++;
-    }
-    if($n == 0){
-        $r=0;
-    }
-    return $r;
-}
+print "Using subroutines: Input base then power of: \n";
+my $pow = <STDIN>;
+my $loops = 100;
 
 sub expon{
-	
-	my ($x,$max_iterations) = @_;
-
-    my $result = 1 + $x;
-    my $i = 2;
-    
-    while ($i < $max_iterations) {
-
-        $result += ($x ** ($i)) / (factorial($i));
-
-        $i++;
-
+    my ($i) = @_;
+    if($i == 0){
+        return 1;}
+    else{
+        return ($pow ** $i / fact($i)) + expon($i-1);
     }
-    return $result;
+    
 }
 
-print expon($n,1000),"\n";
+sub fact{
+    my ($num) = @_;
+    if($num != 0){
+        return $num * fact($num-1);
+    }else{
+        return 1;
+    }
+}
+
+print expon($loops),"\n";
 system("pause");
