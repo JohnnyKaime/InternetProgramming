@@ -12,7 +12,7 @@ sub extract{
 	my ($rowData) = @_;
 	my @rowData = (split /\s+/, $rowData);
 	my $progress = 16;
-	foreach my $data(@rowData[3..$#rowData]){
+	foreach my $data(@rowData[2..$#rowData]){
 		if($data =~ /\((.*?)\)/){
 			$totalMarks += $1;
 			if($progress != 0){
