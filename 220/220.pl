@@ -4,9 +4,10 @@ use strict;
 use warnings;
 use CGI;
 
+my $newCookie;
 my $query = new CGI;
-my $cookie = $query->cookie(
-	-name=>'Admin',
+my $testCookie = $query->cookie(
+    -name=>'Admin',
     -value=>'PerlIsLife',
     -expires=>'+20m',
     -path=>'/');
@@ -21,21 +22,22 @@ close( FILE );
 my $password = $query->param( 'password' );
 my $username = $query->param( 'username' );
 if(defined $username and defined $password){
-	my $newCookie = $query->cookie(
+	$newCookie = $query->cookie(
 		-name=>$username,
 		-value=>$password,
-		-expires=>'+20m',
+		-expires=>'+30s',
 		-path=>'/'
 	);
+	print $query->redirect(-uri => '212.pl', -cookie => $newCookie);
 }
 
-print $query->header( -Cache_Control => 'private', -Cookie=>$cookie);
+print $query->header( -Cache_Control => 'private', -Cookie=>$newCookie);
 print $template;
 
 my $check = $query->param( 'check' );
 if(defined $check){
 	my $theCookie = $query->cookie($check);
-	if("$theCookie"){
+	if($theCookie){
 		print $theCookie;
 	}else{
 		print "WHERES MY COOKIE";
