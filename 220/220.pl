@@ -11,28 +11,33 @@ my $cookie = $query->cookie(
     -expires=>'+20m',
     -path=>'/');
 
+
 undef $/;
 my $webfile = '220.html';
 open( FILE, "< $webfile" ) or die "Could not open $webfile";
 my $template = <FILE>;
 close( FILE );
 
-print $query->header( -Cache_Control => 'private' );
-print $template;
-
 my $password = $query->param( 'password' );
 my $username = $query->param( 'username' );
 if(defined $username and defined $password){
-	print $password;
-	print $username;
+	my $newCookie = $query->cookie(
+		-name=>$username,
+		-value=>$password,
+		-expires=>'+20m',
+		-path=>'/'
+	);
 }
 
-my $theCookie = $query->cookie('Account1');
+print $query->header( -Cache_Control => 'private', -Cookie=>$cookie);
+print $template;
 
-if ("$theCookie") {
-   print "<BLOCKQUOTE>\n";
-   print $theCookie;
-   print "</BLOCKQUOTE>\n";
-} else {
-   print "Can't find my cookie!\n";
+my $check = $query->param( 'check' );
+if(defined $check){
+	my $theCookie = $query->cookie($check);
+	if("$theCookie"){
+		print $theCookie;
+	}else{
+		print "WHERES MY COOKIE";
+	}
 }
