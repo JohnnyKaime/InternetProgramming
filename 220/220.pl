@@ -7,9 +7,9 @@ use CGI;
 my $newCookie;
 my $query = new CGI;
 my $testCookie = $query->cookie(
-    -name=>'Admin',
+	-name=>'Admin',
     -value=>'PerlIsLife',
-    -expires=>'+20m',
+    -expires=>'+1m',
     -path=>'/');
 
 
@@ -28,18 +28,18 @@ if(defined $username and defined $password){
 		-expires=>'+30s',
 		-path=>'/'
 	);
-	print $query->redirect(-uri => '212.pl', -cookie => $newCookie);
+	print $query->redirect(-uri => '212.pl', -cookie => $testCookie);
 }
 
-print $query->header( -Cache_Control => 'private', -Cookie=>$newCookie);
+print $query->header( -Cache_Control => 'private', -Cookie=>$testCookie);
 print $template;
 
-my $check = $query->param( 'check' );
-if(defined $check){
-	my $theCookie = $query->cookie($check);
-	if($theCookie){
-		print $theCookie;
-	}else{
-		print "WHERES MY COOKIE";
-	}
-}
+#my $check = $query->param( 'check' );
+#if(defined $check){
+	#my $theCookie = $query->cookie($check);
+	#if($theCookie){
+		#print $theCookie;
+	#}else{
+		#print "WHERES MY COOKIE";
+	#}
+#}
