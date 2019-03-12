@@ -1,7 +1,4 @@
 #!/usr/bin/perl -w
-
-# time to code all three (including findind search engines to scrape):  1 hour 7 minutes
-
 use strict;
 use warnings;
 use CGI;
@@ -13,7 +10,7 @@ my $improved = $find;
 $improved =~ s/\s/%20/g;
 undef $/;
 
-my $fname = 'metaPage.html';
+my $fname = 'page.html';
 open( FILE, "< $fname" ) or die "Could not open $fname";
 my $template = <FILE>;
 close( FILE );
@@ -32,21 +29,20 @@ sub duckGo{
 	my $counter = 0;
 	my @nurllist;
 	foreach my $url (@urllist){
-	    next if $url =~ /duckduckgo/;
-	    next if $url =~ /localhost/;
-	    $nurllist[$#nurllist+1] = $url;
-	    $counter++;
-	    if($counter==20){
-	    	last;
-	    }
+		if($counter != 50){
+			next if $url =~ /yahoo/;
+			next if $url =~ /localhost/;
+			$nurllist[$#nurllist+1] = $url;
+			$counter++;
+		}
 	}
 	return( \@nurllist );
 }
 
-sub ask{
-	my $query="http://www.ask.com/web?q=".$improved;
-	print `wget $query -O ask-search.html`;
-	my $find_urls = `lynx -dump ask-search.html`;
+sub yahoo{
+	my $query="https://za.search.yahoo.com/search?p=".$improved;
+	print `wget $query -O yahoo-search.html`;
+	my $find_urls = `lynx -dump yahoo-search.html`;
 	$find_urls =~ s/[\w\W]+Visible links//mis;
 
 	my @urllist;
@@ -56,13 +52,12 @@ sub ask{
 	my $counter = 0;
 	my @nurllist;
 	foreach my $url (@urllist){
-	    next if $url =~ /ask/;
-	    next if $url =~ /localhost/;
-	    $nurllist[$#nurllist+1] = $url;
-	    $counter++;
-	    if($counter==20){
-	    	last;
-	    }
+		if($counter != 50){
+			next if $url =~ /yahoo/;
+			next if $url =~ /localhost/;
+			$nurllist[$#nurllist+1] = $url;
+			$counter++;
+		}
 	}
 	return( \@nurllist );
 }
@@ -80,37 +75,59 @@ sub bing{
 	my $counter = 0;
 	my @nurllist;
 	foreach my $url (@urllist){
-	    next if $url =~ /bing/;
-	    next if $url =~ /localhost/;
-	    $nurllist[$#nurllist+1] = $url;
-	    $counter++;
-	    if($counter==20){
-	    	last;
-	    }
+	    if($counter != 50){
+			next if $url =~ /yahoo/;
+			next if $url =~ /localhost/;
+			$nurllist[$#nurllist+1] = $url;
+			$counter++;
+		}
 	}
 	return( \@nurllist );
 }
 my $copy=$template;
+my $outStr;
+
+sub cleanPrint{
+	my ($result,$name) = @_;
+	my @test = @$result;
+	my %hash   = map { $_ => 1 } @test;
+	my @unique = keys %hash;
+	$outStr .= "<h2>Results from : $name</h2>";
+	for my $ind(@unique){
+		$outStr = $outStr. "<a href=$ind>".$ind."</a></br>";
+	}
+}
 
 if(defined $submit)
 {
-		
-	my $duckresult = duckGo();
-	my $askresult = ask();
-	my $bingresult = bing();	
+	cleanPrint(duckGo,"DuckDuckGo");
+	cleanPrint(yahoo,"Yahoo");
+	cleanPrint(bing,"Bing");
+	#my $duckResult = duckGo();
+	#my @test = @$duckResult;
+	#my %hash   = map { $_ => 1 } @test;
+	#my @unique = keys %hash;
+	#my $yahooResult = yahoo();
+	#my @test2 = @$yahooResult;
+	#my %hash   = map { $_ => 1 } @test2;
+	#my @unique2 = keys %hash;
+	#my $bingResult = bing();	
+	#my @test3 = @$bingResult;
+	#my %hash   = map { $_ => 1 } @test3;
+	#my @unique3 = keys %hash;
 
-	my $outStr = "<h2>Results from DuckDuckGo:</h2>";
-	for my $ind(@$duckresult){
-		$outStr = $outStr. "<a href=$ind>".$ind."</a>\n";
-	}
-	$outStr .= "<h2>Results from Ask:</h2>";
-	for my $ind(@$askresult){
-		$outStr = $outStr. "<a href=$ind>".$ind."</a>\n";
-	}
-	$outStr .= "<h2>Results from Bing:</h2>";
-	for my $ind(@$bingresult){
-		$outStr = $outStr. "<a href=$ind>".$ind."</a>\n";
-	}
+	#$outStr = "<h2>Results from DuckDuckGo:</h2>";
+	#for my $ind(@unique){
+		#$outStr = $outStr. "<a href=$ind>".$ind."</a></br>";
+	#}
+	#$outStr .= "<h2>Results from Yahoo:</h2>";
+	#for my $ind(@unique2){
+		#$outStr = $outStr. "<a href=$ind>".$ind."</a></br>";
+	#}
+	#$outStr .= "<h2>Results from Bing:</h2>";
+	#for my $ind(@unique3){
+		#$outStr = $outStr. "<a href=$ind>".$ind."</a></br>";
+	#}
 	$copy =~ s/<!--Text-->/$outStr/s;
 }
 $copy =~ s/<!--Search-->/$find/s;
