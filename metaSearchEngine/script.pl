@@ -15,16 +15,16 @@ my $fname = 'page.html';
 open( FILE, "< $fname" ) or die "Could not open $fname";
 my $template = <FILE>;
 close( FILE );
+
 my @test;
-my $dup;
 my $dup2;
 sub duckGo{
 	my $query="https://duckduckgo.com/html/?q=".$improved;
 	print `wget $query -O duckduckgo-search.html`;
 	my $find_urls = `lynx -dump duckduckgo-search.html`;
-	$dup = $find_urls;
 	$dup2 = $find_urls;
-	$dup2 =~ /[1](.*?)[2]/; 
+	$dup2 =~ m/\[\d+\](.*?)\[\d+\]/s;
+	@test = $1;
 	$find_urls =~ s/[\w\W]+Visible links//mis;
 	
 	my @urllist;
@@ -39,7 +39,7 @@ sub duckGo{
 			next if $url =~ /localhost/;
 			$nurllist[$#nurllist+1] = $url;
 			$counter++;
-		}
+		}else{last;}
 	}
 	return( \@nurllist );
 }
@@ -63,7 +63,7 @@ sub yahoo{
 			next if $url =~ /localhost/;
 			$nurllist[$#nurllist+1] = $url;
 			$counter++;
-		}
+		}else{last;}
 	}
 	return( \@nurllist );
 }
@@ -82,11 +82,11 @@ sub bing{
 	my @nurllist;
 	foreach my $url (@urllist){
 	    if($counter != 50){
-			next if $url =~ /yahoo/;
+			next if $url =~ /bing/;
 			next if $url =~ /localhost/;
 			$nurllist[$#nurllist+1] = $url;
 			$counter++;
-		}
+		}else{last;}
 	}
 	return( \@nurllist );
 }
@@ -118,6 +118,7 @@ if(defined $submit)
 	cleanPrint(bing,"Bing");
 	$copy =~ s/<!--Text-->/$outStr/s;
 }
+
 $copy =~ s/<!--Search-->/$find/s;
 print $script->header( -Cache_Control => 'private' );
 print $copy;
@@ -130,7 +131,16 @@ foreach my $name (reverse sort { $rankHash{$a} <=> $rankHash{$b}} keys %rankHash
 		$counter--
 	}else{last;}
 }
-print "<h4>Test Description</h4>";
-print "<p>$dup</p>";
-print "<h4>Test Description after shit happens</h4>";
-print "<p>$dup2</p>"
+#print "<h4>Test Description</h4>";
+#print "<p>$dup</p>";
+#print "<h4>Test Description after something happens</h4>";
+#print "<p>$dup2</p>";
+print "<h4>Test Description after idk</h4>";
+#foreach my $string (@test){
+	#print "$string<br/>";
+#}
+foreach my $string (@test){
+print "$string</br>";
+}
+print "<h4>Test Description after idk</h4>";
+print $dup2;
