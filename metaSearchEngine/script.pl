@@ -2,6 +2,7 @@
 use strict;
 use warnings;
 use CGI;
+use URI::Title qw( title );
 
 my $script = new CGI;
 my $submit = $script->param('confirm');
@@ -9,6 +10,7 @@ my $find = $script->param('search');
 my $improved = $find;
 $improved =~ s/\s/%20/g;
 my %rankHash;
+my %rankDescription;
 undef $/;
 
 my $fname = 'page.html';
@@ -16,17 +18,35 @@ open( FILE, "< $fname" ) or die "Could not open $fname";
 my $template = <FILE>;
 close( FILE );
 
+sub formatString{
+	my ($ind) = @_;
+	$ind =~ s/%2F/\//g;
+	$ind =~ s/%3A/:/g;
+	$ind =~ s/%2D/-/g;
+	$ind =~ s/%3D/=/g;
+	$ind =~ s/%3F/?/g;
+	$ind =~ s/%25/%/g;
+	$ind =~ s/%26/&/g;
+	$ind =~ s/%20/ /g;
+	$ind =~ s/%28/(/g;
+	$ind =~ s/%29/)/g;
+	chomp($ind);
+	return $ind;
+}
+
 my @test;
 my $dup2;
+my $dup;
 sub duckGo{
 	my $query="https://duckduckgo.com/html/?q=".$improved;
 	print `wget $query -O duckduckgo-search.html`;
 	my $find_urls = `lynx -dump duckduckgo-search.html`;
 	$dup2 = $find_urls;
-	$dup2 =~ m/\[\d+\](.*?)\[\d+\]/s;
-	@test = $1;
+	$dup = $find_urls;
+	while ($dup2 =~ s/\[\d+\](.*?)\[\d+\]//sm){
+		$test[$#test+1] = $1;
+	}
 	$find_urls =~ s/[\w\W]+Visible links//mis;
-	
 	my @urllist;
 	while( $find_urls =~ s/\s*(http[^\s]+)\s*// ){
 	    $urllist[$#urllist+1] = $1;
@@ -37,7 +57,8 @@ sub duckGo{
 		if($counter != 50){
 			next if $url =~ /yahoo/;
 			next if $url =~ /localhost/;
-			$nurllist[$#nurllist+1] = $url;
+			$nurllist[$#nurllist+1] = formatString($url);
+			$rankDescription{formatString($url)} = $test[$counter];
 			$counter++;
 		}else{last;}
 	}
@@ -48,7 +69,10 @@ sub yahoo{
 	my $query="https://za.search.yahoo.com/search?p=".$improved;
 	print `wget $query -O yahoo-search.html`;
 	my $find_urls = `lynx -dump yahoo-search.html`;
-	
+	$dup2 = $find_urls;
+	while ($dup2 =~ s/\[\d+\](.*?)\[\d+\]//sm){
+		$test[$#test+1] = $1;
+	}
 	$find_urls =~ s/[\w\W]+Visible links//mis;
 
 	my @urllist;
@@ -58,10 +82,11 @@ sub yahoo{
 	my $counter = 0;
 	my @nurllist;
 	foreach my $url (@urllist){
-		if($counter != 50){
+		if($counter != 20){
 			next if $url =~ /yahoo/;
 			next if $url =~ /localhost/;
-			$nurllist[$#nurllist+1] = $url;
+			$nurllist[$#nurllist+1] = formatString($url);
+			$rankDescription{formatString($url)} = $test[$counter];
 			$counter++;
 		}else{last;}
 	}
@@ -72,6 +97,10 @@ sub bing{
 	my $query="https://www.bing.com/search?q=".$improved;
 	print `wget $query -O bing-search.html`;
 	my $find_urls = `lynx -dump bing-search.html`;
+	$dup2 = $find_urls;
+	while ($dup2 =~ s/\[\d+\](.*?)\[\d+\]//sm){
+		$test[$#test+1] = $1;
+	}
 	$find_urls =~ s/[\w\W]+Visible links//mis;
 
 	my @urllist;
@@ -81,15 +110,17 @@ sub bing{
 	my $counter = 0;
 	my @nurllist;
 	foreach my $url (@urllist){
-	    if($counter != 50){
+	    if($counter != 20){
 			next if $url =~ /bing/;
 			next if $url =~ /localhost/;
-			$nurllist[$#nurllist+1] = $url;
+			$nurllist[$#nurllist+1] = formatString($url);
+			$rankDescription{formatString($url)} = $test[$counter];
 			$counter++;
 		}else{last;}
 	}
 	return( \@nurllist );
 }
+
 my $copy=$template;
 my $outStr;
 sub cleanPrint{
@@ -99,14 +130,11 @@ sub cleanPrint{
 	my @unique = keys %hash;
 	$outStr .= "<h2>Results from : $name</h2>";
 	for my $ind(@unique){
-		$ind =~ s/%2F/\//g;
-		$ind =~ s/%3A/:/g;
-		chomp($ind);
-		$outStr = $outStr. "<a href=$ind>".$ind."</a></br>";
-		if (exists $rankHash{"<a href=$ind>".$ind."</a>"}) {
-			$rankHash{"<a href=$ind>".$ind."</a>"}++;
+		$outStr = $outStr. "<a href=$ind>".formatString($ind)."</a></br>";
+		if (exists $rankHash{$ind}) {
+			$rankHash{$ind}++;
 		} else {
-			$rankHash{"<a href=$ind>".$ind."</a>"} = 1;
+			$rankHash{$ind} = 1;
 		}
 	}
 }
@@ -123,24 +151,24 @@ $copy =~ s/<!--Search-->/$find/s;
 print $script->header( -Cache_Control => 'private' );
 print $copy;
 print "<h2>After Ranking</h2>";
-print "<h3>First 20 links with most appearances</h3>";
-my $counter = 20;
+print "<h3>First 10 links with most appearances</h3>";
+my $counter = 0;
 foreach my $name (reverse sort { $rankHash{$a} <=> $rankHash{$b}} keys %rankHash) {
-	if($counter != 0){
-		print $name."  Appearances  ".$rankHash{$name}."</br>";
-		$counter--
+	if($counter != 10){
+		my $title = title($name);
+		if($title){
+			print "<h4>$title</h4>";
+		}else{
+			print "No Title Found";
+		}
+		print "<a href=$name>".$name."</a>  Appearances  ".$rankHash{$name};
+		print "<p>$rankDescription{$name}</p>";
+		$counter++;
 	}else{last;}
 }
-#print "<h4>Test Description</h4>";
-#print "<p>$dup</p>";
-#print "<h4>Test Description after something happens</h4>";
-#print "<p>$dup2</p>";
-print "<h4>Test Description after idk</h4>";
-#foreach my $string (@test){
-	#print "$string<br/>";
+
+print "<h1>Testing shizzz</h1>";
+#foreach my $key (keys %rankDescription){
+	#print "<p>$key<br/>$rankDescription{$key}</p>";
 #}
-foreach my $string (@test){
-print "$string</br>";
-}
-print "<h4>Test Description after idk</h4>";
-print $dup2;
+print $dup;
