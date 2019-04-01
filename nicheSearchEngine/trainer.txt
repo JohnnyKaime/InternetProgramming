@@ -119,7 +119,6 @@ as
 ashford
 ask
 aspect
-asplund
 assasination
 assistant
 assume
@@ -150,6 +149,7 @@ barebones
 barely
 based
 basic
+basket
 battle
 bay
 be
@@ -216,7 +216,6 @@ cast
 catchy
 caught
 cc
-ccmainyukanajapanese
 century
 certain
 chained
@@ -299,7 +298,6 @@ convey
 convince
 convincingly
 copy
-corneliasupportingminagawa
 could
 count
 counting
@@ -483,7 +481,6 @@ establishment
 ethnic
 euphemia
 euphemias
-euphemiasupportingminami
 eureka
 evangelion
 even
@@ -545,7 +542,6 @@ featured
 feel
 feels
 female
-fenette
 few
 fights
 figure
@@ -590,6 +586,7 @@ friends
 friendships
 frightened
 from
+fruits
 fukuyama
 fukuyamas
 full
@@ -633,7 +630,6 @@ goody
 goro
 goroudirector
 got
-gottwald
 grabs
 gradually
 grammar
@@ -795,7 +791,6 @@ ive
 japan
 japanese
 jeremiah
-jeremiahsupportingnarita
 jinn
 job
 johnny
@@ -819,7 +814,6 @@ kaidoku
 kajiuras
 kakera
 kallen
-kallenmainkoshimizu
 kaorijapanese
 kara
 karen
@@ -847,7 +841,6 @@ koudou
 kuro
 kuroishi
 kurosawas
-kururugi
 kyousuke
 l
 lack
@@ -871,7 +864,6 @@ leaving
 left
 lelouc
 lelouch
-lelouchmainfukuyama
 lelouchs
 lelouchside
 lelouchzero
@@ -879,7 +871,6 @@ lesbian
 lesson
 let
 lets
-li
 life
 lifelike
 light
@@ -901,7 +892,6 @@ lives
 living
 llc
 lloyds
-lloydsupportingshiratori
 logic
 look
 loose
@@ -939,6 +929,7 @@ many
 mar
 marginally
 mark
+marumaru
 mascot
 maseba
 masked
@@ -973,7 +964,6 @@ mind
 minor
 mistake
 mix
-mob
 mode
 moe
 moment
@@ -1012,6 +1002,7 @@ nakagawa
 namco
 name
 named
+nariagarimoremost
 narrative
 nation
 nature
@@ -1023,7 +1014,6 @@ negligible
 neither
 nerojeko
 never
-neverland
 nevertheless
 new
 newfound
@@ -1052,7 +1042,6 @@ number
 numbingly
 nunnally
 nunnallys
-nunnallysupportingnazuka
 obedience
 obscured
 obstacle
@@ -1133,7 +1122,7 @@ philosophies
 physical
 picking
 picture
-piecemoremost
+piece
 pink
 place
 plain
@@ -1207,7 +1196,6 @@ provide
 provides
 proving
 prowess
-psycho
 public
 published
 purple
@@ -1391,7 +1379,6 @@ shame
 she
 shelved
 shirley
-shirleysupportingorikasa
 shit
 shoe
 shoten
@@ -1445,7 +1432,6 @@ spectacle
 spectacular
 spreads
 st
-stadtfeld
 staff
 staffnewsforumfeaturedclubspictures
 stages
@@ -1517,7 +1503,6 @@ surprised
 surprising
 survived
 suzaku
-suzakumainsakurai
 suzakus
 swapped
 swift
@@ -1533,6 +1518,7 @@ talents
 talk
 tanaguchi
 taniguchi
+tate
 team
 technical
 technologies
@@ -1786,7 +1772,16 @@ written
 wtf
 x
 yagami
-yakusoku
+yamadamainfukuyama
+yamadamainkoshimizu
+yamadamainsakurai
+yamadamainyukanajapanese
+yamadasupportingminagawa
+yamadasupportingminami
+yamadasupportingnarita
+yamadasupportingnazuka
+yamadasupportingorikasa
+yamadasupportingshiratori
 yasuosound
 year
 years
